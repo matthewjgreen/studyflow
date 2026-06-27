@@ -24,9 +24,6 @@ export default function Sidebar() {
     <aside className="hidden md:flex md:w-60 lg:w-64 shrink-0 flex-col border-r border-slate-200/70 bg-white px-4 py-6 dark:border-slate-700 dark:bg-slate-800">
       <div className="px-3 mb-8">
         <h1 className="text-xl font-extrabold text-brand-700">Trackr</h1>
-        <p className="text-[10px] font-semibold tracking-[0.15em] text-slate-400 uppercase">
-          Assignment Tracker
-        </p>
       </div>
 
       <nav className="flex-1 space-y-1">
