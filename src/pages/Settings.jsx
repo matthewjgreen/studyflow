@@ -1,5 +1,4 @@
 import { useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
 import { useTheme } from '../context/ThemeContext.jsx'
 import { useAssignments } from '../context/AssignmentsContext.jsx'
@@ -11,7 +10,7 @@ import { fileToDataUrl } from '../lib/image.js'
 import Avatar from '../components/Avatar.jsx'
 import CropModal from '../components/CropModal.jsx'
 import {
-  UserIcon, BookIcon, SunIcon, MoonIcon, TrashIcon, PlusIcon, LogoutIcon, BellIcon,
+  UserIcon, BookIcon, SunIcon, MoonIcon, TrashIcon, PlusIcon, BellIcon,
 } from '../components/Icons.jsx'
 
 export default function Settings() {
@@ -23,14 +22,13 @@ export default function Settings() {
       </div>
 
       <div className="space-y-5">
-        <AvatarSection />
         <ProfileSection />
+        <CoursesSection />
         <PasswordSection />
         <AppearanceSection />
         <BannerSection />
         <NotificationsSection />
-        <CoursesSection />
-        <AccountSection />
+        <AvatarSection />
       </div>
     </div>
   )
@@ -567,25 +565,3 @@ function ColorPicker({ value, onChange }) {
   )
 }
 
-/* ---------- account (sign out) ---------- */
-
-function AccountSection() {
-  const { signOut } = useAuth()
-  const navigate = useNavigate()
-
-  async function handleSignOut() {
-    await signOut()
-    navigate('/')
-  }
-
-  return (
-    <Card icon={LogoutIcon} title="Account">
-      <button
-        onClick={handleSignOut}
-        className="flex w-full items-center justify-center gap-2 rounded-xl border border-rose-200 py-3 text-sm font-semibold text-rose-600 transition hover:bg-rose-50 dark:border-rose-500/40 dark:hover:bg-rose-500/10"
-      >
-        <LogoutIcon className="h-5 w-5" /> Sign out
-      </button>
-    </Card>
-  )
-}

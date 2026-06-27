@@ -1,13 +1,13 @@
 import { NavLink } from 'react-router-dom'
 import {
-  DashboardIcon, CalendarIcon, ListIcon, SettingsIcon,
+  DashboardIcon, CalendarIcon, ListIcon,
 } from './Icons.jsx'
 
+// Settings + sign-out live in the avatar menu (top-right) on mobile.
 const items = [
   { to: '/', label: 'Dashboard', icon: DashboardIcon, end: true },
   { to: '/calendar', label: 'Calendar', icon: CalendarIcon },
   { to: '/assignments', label: 'Assignments', icon: ListIcon },
-  { to: '/settings', label: 'Settings', icon: SettingsIcon },
 ]
 
 export default function MobileNav() {

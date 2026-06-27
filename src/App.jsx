@@ -45,6 +45,10 @@ function AuthedApp() {
   // we also hide the mobile floating add button there.
   const onAddPage = location.pathname.startsWith('/assignments/new')
   const showQuickAdd = onAddPage
+  // The mobile "+" button is hidden where adding inline doesn't make sense.
+  const hideFab = ['/assignments/new', '/calendar', '/settings'].some((p) =>
+    location.pathname.startsWith(p)
+  )
 
   return (
     <div className="flex min-h-screen bg-slate-50 dark:bg-slate-900">
@@ -65,7 +69,7 @@ function AuthedApp() {
         </main>
       </div>
 
-      {!onAddPage && <FloatingAddButton />}
+      {!hideFab && <FloatingAddButton />}
       <MobileNav />
     </div>
   )

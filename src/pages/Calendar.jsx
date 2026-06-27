@@ -21,6 +21,7 @@ export default function Calendar() {
 
   const [view, setView] = useState({ year: today.getFullYear(), month: today.getMonth() })
   const [selected, setSelected] = useState(today)
+  const [mode, setMode] = useState('month') // 'month' | 'week'
 
   // Group assignments by their due-date key (YYYY-M-D) for O(1) cell lookups.
   const byDay = useMemo(() => {
@@ -35,23 +36,49 @@ export default function Calendar() {
 
   const dayKey = (d) => `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`
 
-  // Build the 6-week grid (always 42 cells) covering the visible month.
+  // Month mode → 6-week grid (42 cells). Week mode → the 7 days of the week
+  // containing the selected date.
   const cells = useMemo(() => {
+    if (mode === 'week') {
+      const start = new Date(selected)
+      start.setDate(selected.getDate() - selected.getDay()) // back up to Sunday
+      return Array.from({ length: 7 }, (_, i) => {
+        const date = new Date(start)
+        date.setDate(start.getDate() + i)
+        return date
+      })
+    }
     const first = new Date(view.year, view.month, 1)
     const start = new Date(first)
-    start.setDate(first.getDate() - first.getDay()) // back up to Sunday
+    start.setDate(first.getDate() - first.getDay())
     return Array.from({ length: 42 }, (_, i) => {
       const date = new Date(start)
       date.setDate(start.getDate() + i)
       return date
     })
-  }, [view])
+  }, [mode, view, selected])
 
   function shiftMonth(delta) {
     setView((v) => {
       const m = v.month + delta
       return { year: v.year + Math.floor(m / 12), month: ((m % 12) + 12) % 12 }
     })
+  }
+
+  function shiftWeek(delta) {
+    const d = new Date(selected)
+    d.setDate(selected.getDate() + delta * 7)
+    setSelected(d)
+    setView({ year: d.getFullYear(), month: d.getMonth() })
+  }
+
+  const shiftPrev = () => (mode === 'week' ? shiftWeek(-1) : shiftMonth(-1))
+  const shiftNext = () => (mode === 'week' ? shiftWeek(1) : shiftMonth(1))
+
+  function switchMode(next) {
+    setMode(next)
+    // Keep the month grid aligned with whatever day is currently selected.
+    if (next === 'month') setView({ year: selected.getFullYear(), month: selected.getMonth() })
   }
 
   function goToday() {
@@ -63,18 +90,47 @@ export default function Calendar() {
     (a, b) => new Date(a.dueDate) - new Date(b.dueDate)
   )
 
+  // Header label: "June 2026" (month) or "Jun 22 – 28, 2026" (week).
+  const headerLabel =
+    mode === 'week'
+      ? (() => {
+          const s = cells[0]
+          const e = cells[6]
+          const sm = MONTHS[s.getMonth()].slice(0, 3)
+          const em = MONTHS[e.getMonth()].slice(0, 3)
+          return s.getMonth() === e.getMonth()
+            ? `${sm} ${s.getDate()} – ${e.getDate()}, ${s.getFullYear()}`
+            : `${sm} ${s.getDate()} – ${em} ${e.getDate()}, ${e.getFullYear()}`
+        })()
+      : `${MONTHS[view.month]} ${view.year}`
+
   return (
     <div className="mx-auto max-w-6xl px-5 py-6 md:px-8">
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Calendar</h2>
-          <p className="mt-1 text-sm text-slate-400">
-            {MONTHS[view.month]} {view.year}
-          </p>
+          <p className="mt-1 text-sm text-slate-400">{headerLabel}</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Month / Week toggle */}
+          <div className="flex items-center gap-0.5 rounded-lg border border-slate-200 p-0.5 dark:border-slate-600">
+            {['month', 'week'].map((m) => (
+              <button
+                key={m}
+                onClick={() => switchMode(m)}
+                className={`rounded-md px-3 py-1.5 text-sm font-semibold capitalize transition ${
+                  mode === m
+                    ? 'bg-brand-600 text-white'
+                    : 'text-slate-500 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700'
+                }`}
+              >
+                {m}
+              </button>
+            ))}
+          </div>
+
           <button
-            onClick={() => shiftMonth(-1)}
+            onClick={shiftPrev}
             className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold dark:border-slate-600 dark:bg-slate-700 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-700"
           >
             ‹
@@ -86,7 +142,7 @@ export default function Calendar() {
             Today
           </button>
           <button
-            onClick={() => shiftMonth(1)}
+            onClick={shiftNext}
             className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold dark:border-slate-600 dark:bg-slate-700 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-700"
           >
             ›
@@ -108,15 +164,16 @@ export default function Calendar() {
             ))}
 
             {cells.map((date) => {
-              const inMonth = date.getMonth() === view.month
+              const inMonth = mode === 'week' ? true : date.getMonth() === view.month
               const isToday = sameDay(date, today)
               const isSelected = sameDay(date, selected)
               const items = byDay[dayKey(date)] ?? []
+              const max = mode === 'week' ? 4 : 2
               return (
                 <button
                   key={date.toISOString()}
                   onClick={() => setSelected(new Date(date))}
-                  className={`flex min-h-[68px] flex-col rounded-xl border p-1.5 text-left transition md:min-h-[88px] ${
+                  className={`flex ${mode === 'week' ? 'min-h-[120px] md:min-h-[170px]' : 'min-h-[68px] md:min-h-[88px]'} flex-col rounded-xl border p-1.5 text-left transition ${
                     isSelected
                       ? 'border-brand-400 bg-brand-50/60 ring-1 ring-brand-200 dark:border-brand-500 dark:bg-slate-700 dark:ring-brand-500/40'
                       : 'border-transparent hover:border-slate-200 hover:bg-slate-50 dark:hover:border-slate-600 dark:hover:bg-slate-700'
@@ -130,7 +187,7 @@ export default function Calendar() {
                     {date.getDate()}
                   </span>
                   <div className="space-y-0.5">
-                    {items.slice(0, 2).map((a) => {
+                    {items.slice(0, max).map((a) => {
                       const accent = accentFor(courseById(courses, a.courseId)?.color)
                       return (
                         <div
@@ -144,9 +201,9 @@ export default function Calendar() {
                         </div>
                       )
                     })}
-                    {items.length > 2 && (
+                    {items.length > max && (
                       <div className="px-1 text-[10px] font-semibold text-slate-400">
-                        +{items.length - 2} more
+                        +{items.length - max} more
                       </div>
                     )}
                   </div>

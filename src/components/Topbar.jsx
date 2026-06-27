@@ -1,7 +1,7 @@
 import { useMemo, useRef, useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAssignments, courseById, formatDueLabel } from '../context/AssignmentsContext.jsx'
-import Avatar from './Avatar.jsx'
+import AvatarMenu from './AvatarMenu.jsx'
 import NotificationsBell from './NotificationsBell.jsx'
 import NotesPanel from './NotesPanel.jsx'
 import { SearchIcon, PlusIcon, typeIcon } from './Icons.jsx'
@@ -147,7 +147,7 @@ export default function Topbar({ showQuickAdd = false }) {
         )}
         <NotesPanel />
         <NotificationsBell />
-        <Avatar size={36} />
+        <AvatarMenu size={36} />
       </div>
     </header>
   )

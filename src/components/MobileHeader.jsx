@@ -1,4 +1,4 @@
-import Avatar from './Avatar.jsx'
+import AvatarMenu from './AvatarMenu.jsx'
 import NotificationsBell from './NotificationsBell.jsx'
 import NotesPanel from './NotesPanel.jsx'
 
@@ -15,7 +15,7 @@ export default function MobileHeader() {
       <div className="flex items-center gap-1">
         <NotesPanel />
         <NotificationsBell />
-        <Avatar size={32} />
+        <AvatarMenu size={32} />
       </div>
     </header>
   )
