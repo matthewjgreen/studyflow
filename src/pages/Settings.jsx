@@ -352,6 +352,12 @@ function NotificationsSection() {
     await enablePush() // only flips closedPush on if permission is granted
   }
 
+  // iOS only allows web push from an app installed to the Home Screen.
+  const isIOS = /ipad|iphone|ipod/i.test(navigator.userAgent)
+  const isStandalone =
+    window.navigator.standalone === true ||
+    window.matchMedia?.('(display-mode: standalone)').matches
+
   return (
     <Card icon={BellIcon} title="Notifications" subtitle="Reminders shown in the bell at the top">
       <Toggle
@@ -362,6 +368,14 @@ function NotificationsSection() {
 
       {prefs.enabled && (
         <div className="mt-4 space-y-5 border-t border-slate-100 pt-4 dark:border-slate-700">
+          {isIOS && !isStandalone && (
+            <p className="rounded-lg bg-brand-50 px-3 py-2.5 text-xs leading-relaxed text-brand-700 dark:bg-brand-500/10 dark:text-brand-200">
+              📱 <b>On iPhone/iPad:</b> to get lockscreen reminders, tap the Safari <b>Share</b> button →{' '}
+              <b>Add to Home Screen</b>, then open Trackr from your Home Screen and turn on
+              “Remind me when the app is closed” below.
+            </p>
+          )}
+
           {browserSupportsPush ? (
             <div>
               <Toggle
