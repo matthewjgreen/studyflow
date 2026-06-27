@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams, useNavigate } from 'react-router-dom'
 import { useAssignments, courseById } from '../context/AssignmentsContext.jsx'
 import { accentFor } from '../lib/accents.js'
 import { dueMeta, bucketFor, DUE_BUCKETS } from '../lib/due.js'
 import StatusSelect from '../components/StatusSelect.jsx'
 import EmptyState from '../components/EmptyState.jsx'
 import { SkeletonRows } from '../components/Skeleton.jsx'
-import { SearchIcon, ListIcon, typeIcon } from '../components/Icons.jsx'
+import { SearchIcon, ListIcon, EditIcon, typeIcon } from '../components/Icons.jsx'
 
 const FILTERS = [
   { key: 'all', label: 'All' },
@@ -17,6 +17,7 @@ const FILTERS = [
 
 export default function Assignments() {
   const { assignments, courses, setStatus, removeAssignment, loading } = useAssignments()
+  const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const [filter, setFilter] = useState('all')
   const [query, setQuery] = useState(searchParams.get('q') ?? '')
@@ -93,8 +94,15 @@ export default function Assignments() {
         )}
         <StatusSelect value={a.status} onChange={(s) => setStatus(a.id, s)} />
         <button
+          onClick={() => navigate(`/assignments/${a.id}/edit`)}
+          className="shrink-0 rounded-lg p-1.5 text-slate-400 transition hover:bg-slate-100 hover:text-brand-600 dark:hover:bg-slate-700 dark:hover:text-brand-300"
+          title="Edit"
+        >
+          <EditIcon className="h-4 w-4" />
+        </button>
+        <button
           onClick={() => removeAssignment(a.id)}
-          className="shrink-0 text-xs font-medium text-slate-300 hover:text-rose-500"
+          className="shrink-0 rounded-lg p-1.5 text-slate-400 transition hover:bg-rose-50 hover:text-rose-500 dark:hover:bg-rose-500/10"
           title="Delete"
         >
           ✕

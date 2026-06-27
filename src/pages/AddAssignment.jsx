@@ -1,6 +1,7 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 import { useAssignments } from '../context/AssignmentsContext.jsx'
+import { useToast } from '../context/ToastContext.jsx'
 import { STATUSES, DEFAULT_STATUS } from '../lib/status.js'
 import { typeIcon, PaperclipIcon, LinkIcon } from '../components/Icons.jsx'
 
@@ -17,12 +18,48 @@ const emptyForm = {
   notes: '',
 }
 
+// ISO → the local "YYYY-MM-DDTHH:mm" string a datetime-local input expects.
+function toLocalInput(iso) {
+  const d = new Date(iso)
+  const pad = (n) => String(n).padStart(2, '0')
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
+}
+
+// Fill the form from an existing assignment (for edit mode). A type that isn't
+// one of the presets becomes the custom "Other" value.
+function fromAssignment(a) {
+  const known = TYPES.includes(a.type)
+  return {
+    title: a.title ?? '',
+    courseId: a.courseId ?? '',
+    dueDate: a.dueDate ? toLocalInput(a.dueDate) : '',
+    type: known ? a.type : 'Other',
+    customType: known ? '' : a.type,
+    priority: a.priority ?? 'Normal',
+    status: a.status ?? DEFAULT_STATUS,
+    notes: a.notes ?? '',
+  }
+}
+
 export default function AddAssignment() {
-  const { courses, addAssignment } = useAssignments()
+  const { id } = useParams()
+  const { courses, addAssignment, updateAssignment, assignments } = useAssignments()
+  const toast = useToast()
   const navigate = useNavigate()
-  const [form, setForm] = useState(emptyForm)
+
+  const editing = Boolean(id)
+  const existing = editing ? assignments.find((a) => a.id === id) : null
+
+  const [form, setForm] = useState(existing ? fromAssignment(existing) : emptyForm)
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
+
+  // Prefill once the assignment is available (e.g. on a direct page load where
+  // data hasn't finished fetching yet).
+  useEffect(() => {
+    if (existing) setForm(fromAssignment(existing))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [existing])
 
   function set(field, value) {
     setForm((f) => ({ ...f, [field]: value }))
@@ -56,10 +93,19 @@ export default function AddAssignment() {
       return
     }
     setBusy(true)
-    const id = await addAssignment(buildPayload())
+
+    if (editing) {
+      await updateAssignment(id, buildPayload())
+      setBusy(false)
+      toast('Assignment updated')
+      navigate('/assignments')
+      return
+    }
+
+    const newId = await addAssignment(buildPayload())
     setBusy(false)
 
-    if (!id) {
+    if (!newId) {
       setError('Could not save the assignment. Please try again.')
       return
     }
@@ -74,9 +120,13 @@ export default function AddAssignment() {
   return (
     <div className="mx-auto max-w-5xl px-5 py-6 md:px-8">
       <div className="mb-5">
-        <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Add New Assignment</h2>
+        <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100">
+          {editing ? 'Edit Assignment' : 'Add New Assignment'}
+        </h2>
         <p className="mt-1 text-sm text-slate-400">
-          Fill in the details below to keep your academic momentum going.
+          {editing
+            ? 'Update the details below and save your changes.'
+            : 'Fill in the details below to keep your academic momentum going.'}
         </p>
       </div>
 
@@ -218,20 +268,22 @@ export default function AddAssignment() {
               disabled={busy}
               className="w-full rounded-xl bg-brand-600 py-3 text-sm font-semibold text-white shadow-soft transition hover:bg-brand-700 disabled:opacity-60"
             >
-              {busy ? 'Saving…' : 'Save Assignment'}
+              {busy ? 'Saving…' : editing ? 'Save Changes' : 'Save Assignment'}
             </button>
+            {!editing && (
+              <button
+                onClick={() => handleSave(true)}
+                disabled={busy}
+                className="w-full rounded-xl border border-brand-200 py-3 text-sm font-semibold text-brand-600 transition hover:bg-brand-50 disabled:opacity-60"
+              >
+                Save &amp; Add Another
+              </button>
+            )}
             <button
-              onClick={() => handleSave(true)}
-              disabled={busy}
-              className="w-full rounded-xl border border-brand-200 py-3 text-sm font-semibold text-brand-600 transition hover:bg-brand-50 disabled:opacity-60"
-            >
-              Save &amp; Add Another
-            </button>
-            <button
-              onClick={() => navigate('/')}
+              onClick={() => navigate(editing ? '/assignments' : '/')}
               className="w-full py-1 text-center text-sm font-medium text-slate-400 hover:text-slate-600"
             >
-              Discard Changes
+              {editing ? 'Cancel' : 'Discard Changes'}
             </button>
           </div>
         </div>

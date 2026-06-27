@@ -62,6 +62,7 @@ function AuthedApp() {
             <Route path="/" element={<Dashboard />} />
             <Route path="/assignments" element={<Assignments />} />
             <Route path="/assignments/new" element={<AddAssignment />} />
+            <Route path="/assignments/:id/edit" element={<AddAssignment />} />
             <Route path="/calendar" element={<Calendar />} />
             <Route path="/settings" element={<Settings />} />
           </Routes>
