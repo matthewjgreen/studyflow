@@ -5,7 +5,7 @@ import ProgressRing from '../components/ProgressRing.jsx'
 import StatusSelect from '../components/StatusSelect.jsx'
 import EmptyState from '../components/EmptyState.jsx'
 import { SkeletonRows } from '../components/Skeleton.jsx'
-import { ClockIcon, TrendIcon } from '../components/Icons.jsx'
+import { ClockIcon, TrendIcon, EditIcon } from '../components/Icons.jsx'
 
 const STAT_CARDS = [
   { key: 'total', label: 'Total', tone: 'bg-brand-50 text-brand-700 dark:bg-brand-500/10 dark:text-brand-300' },
@@ -63,6 +63,13 @@ export default function Dashboard() {
                     <p className="truncate text-sm font-semibold text-slate-700 dark:text-slate-100">{a.title}</p>
                   </div>
                   <StatusSelect value={a.status} onChange={(s) => setStatus(a.id, s)} />
+                  <button
+                    onClick={() => navigate(`/assignments/${a.id}/edit`)}
+                    className="shrink-0 rounded-lg p-1.5 text-slate-400 transition hover:bg-slate-100 hover:text-brand-600 dark:hover:bg-slate-600 dark:hover:text-brand-300"
+                    title="Edit"
+                  >
+                    <EditIcon className="h-4 w-4" />
+                  </button>
                 </li>
               )
             })}

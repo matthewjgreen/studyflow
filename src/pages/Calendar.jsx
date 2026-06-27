@@ -1,9 +1,10 @@
 import { useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useAssignments, formatDueLabel, courseById } from '../context/AssignmentsContext.jsx'
 import { accentFor } from '../lib/accents.js'
 import { statusMeta } from '../lib/status.js'
 import EmptyState from '../components/EmptyState.jsx'
-import { typeIcon, CalendarIcon } from '../components/Icons.jsx'
+import { typeIcon, CalendarIcon, EditIcon } from '../components/Icons.jsx'
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 const MONTHS = [
@@ -18,6 +19,7 @@ const sameDay = (a, b) =>
 
 export default function Calendar() {
   const { assignments, courses } = useAssignments()
+  const navigate = useNavigate()
   const today = new Date()
 
   const [view, setView] = useState({ year: today.getFullYear(), month: today.getMonth() })
@@ -238,6 +240,13 @@ export default function Calendar() {
                   <span className={`shrink-0 rounded-md px-2 py-0.5 text-[10px] font-semibold ${statusMeta(a.status).pill}`}>
                     {statusMeta(a.status).label}
                   </span>
+                  <button
+                    onClick={() => navigate(`/assignments/${a.id}/edit`)}
+                    className="shrink-0 rounded-lg p-1.5 text-slate-400 transition hover:bg-slate-100 hover:text-brand-600 dark:hover:bg-slate-600 dark:hover:text-brand-300"
+                    title="Edit"
+                  >
+                    <EditIcon className="h-4 w-4" />
+                  </button>
                 </li>
               )
             })}
