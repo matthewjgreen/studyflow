@@ -4,11 +4,11 @@ import { useAssignments, courseById, formatDueLabel } from '../context/Assignmen
 import AvatarMenu from './AvatarMenu.jsx'
 import NotificationsBell from './NotificationsBell.jsx'
 import NotesPanel from './NotesPanel.jsx'
-import { SearchIcon, PlusIcon, typeIcon } from './Icons.jsx'
+import { SearchIcon, typeIcon } from './Icons.jsx'
 
 // Desktop top bar with global search + quick-add. Hidden on mobile, where the
 // header lives inside each page instead.
-export default function Topbar({ showQuickAdd = false }) {
+export default function Topbar() {
   const navigate = useNavigate()
   const { assignments, courses } = useAssignments()
   const [query, setQuery] = useState('')
@@ -137,14 +137,6 @@ export default function Topbar({ showQuickAdd = false }) {
       </div>
 
       <div className="ml-auto flex items-center gap-3">
-        {showQuickAdd && (
-          <button
-            onClick={() => navigate('/assignments/new')}
-            className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-brand-600 to-brand-500 px-4 py-2 text-sm font-semibold text-white shadow-soft hover:from-brand-700 hover:to-brand-600"
-          >
-            <PlusIcon className="h-4 w-4" /> Quick Add
-          </button>
-        )}
         <NotesPanel />
         <NotificationsBell />
         <AvatarMenu size={36} />

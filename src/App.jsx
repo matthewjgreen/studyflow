@@ -41,10 +41,6 @@ export default function App() {
 
 function AuthedApp() {
   const location = useLocation()
-  // The Add Assignment page has its own "Quick Add" button in the top bar, so
-  // we also hide the mobile floating add button there.
-  const onAddPage = location.pathname.startsWith('/assignments/new')
-  const showQuickAdd = onAddPage
   // The mobile "+" button is hidden where adding inline doesn't make sense.
   const hideFab = ['/assignments/new', '/calendar', '/settings'].some((p) =>
     location.pathname.startsWith(p)
@@ -56,7 +52,7 @@ function AuthedApp() {
 
       <div className="flex min-w-0 flex-1 flex-col">
         <MobileHeader />
-        <Topbar showQuickAdd={showQuickAdd} />
+        <Topbar />
 
         <main className="flex-1 overflow-y-auto pb-20 md:pb-0">
           <Routes>
