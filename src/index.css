@@ -11,6 +11,9 @@
 body {
   @apply bg-slate-50 text-slate-800 antialiased dark:bg-slate-900 dark:text-slate-100;
   font-family: 'Inter', system-ui, sans-serif;
+  /* Prevent double-tap-to-zoom and iOS text auto-resizing for an app-like feel. */
+  touch-action: manipulation;
+  -webkit-text-size-adjust: 100%;
 }
 
 /* Thin custom scrollbar */
