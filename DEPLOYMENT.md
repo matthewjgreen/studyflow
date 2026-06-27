@@ -18,7 +18,7 @@ git commit -m "Trackr initial commit"
 Then create an **empty** repo on github.com (no README), and push:
 
 ```bash
-git remote add origin https://github.com/<you>/studyflow.git
+git remote add origin https://github.com/<you>/trackr.git
 git branch -M main
 git push -u origin main
 ```
@@ -29,7 +29,7 @@ git push -u origin main
 ## 2. Import the repo into Vercel
 
 1. Go to **vercel.com** → sign in (use "Continue with GitHub").
-2. **Add New… → Project** → import your `studyflow` repo.
+2. **Add New… → Project** → import your `trackr` repo.
 3. Vercel auto-detects **Vite**. Leave the defaults:
    - Framework Preset: **Vite**
    - Build Command: `npm run build`
@@ -48,7 +48,7 @@ in a browser bundle:
 | `VITE_SUPABASE_ANON_KEY` | (the long anon key from `.env`) |
 | `VITE_VAPID_PUBLIC_KEY` | (the VAPID public key from `.env`) |
 
-Then click **Deploy**. You'll get a URL like `https://studyflow-xxxx.vercel.app`.
+Then click **Deploy**. You'll get a URL like `https://trackr.vercel.app`.
 
 ## 4. Point Supabase auth at the new domain
 
