@@ -49,7 +49,7 @@ export default function Login() {
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-brand-50 via-slate-50 to-fuchsia-50 px-4 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800">
       <div className="w-full max-w-sm">
         <div className="mb-6 text-center">
-          <h1 className="text-2xl font-extrabold text-brand-700">StudyFlow</h1>
+          <h1 className="text-2xl font-extrabold text-brand-700">Trackr</h1>
           <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">
             Assignment Tracker
           </p>

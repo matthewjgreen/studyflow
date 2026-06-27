@@ -189,7 +189,7 @@ function AppearanceSection() {
     { value: 'dark', label: 'Dark', icon: MoonIcon },
   ]
   return (
-    <Card icon={SunIcon} title="Appearance" subtitle="Choose how StudyFlow looks">
+    <Card icon={SunIcon} title="Appearance" subtitle="Choose how Trackr looks">
       <div className="grid grid-cols-2 gap-3">
         {options.map(({ value, label, icon: Icon }) => {
           const active = theme === value
@@ -379,7 +379,7 @@ function NotificationsSection() {
               {prefs.browserPush && permission === 'granted' && (
                 <button
                   onClick={() =>
-                    new Notification('StudyFlow', { body: "Test notification — you're all set! 🔔" })
+                    new Notification('Trackr', { body: "Test notification — you're all set! 🔔" })
                   }
                   className="mt-2 text-xs font-semibold text-brand-600 hover:underline dark:text-brand-300"
                 >
@@ -391,7 +391,7 @@ function NotificationsSection() {
                 <div className="mt-4 border-t border-slate-100 pt-4 dark:border-slate-700">
                   <Toggle
                     label="Remind me when the app is closed"
-                    description="Delivers reminders to this device even when StudyFlow isn't open. Requires the push server to be running."
+                    description="Delivers reminders to this device even when Trackr isn't open. Requires the push server to be running."
                     checked={prefs.closedPush && permission === 'granted'}
                     onChange={toggleClosed}
                   />

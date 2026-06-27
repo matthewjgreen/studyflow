@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "Background worker that sends StudyFlow due-date reminders as Web Push notifications, even when the app is closed.",
+  "description": "Background worker that sends Trackr due-date reminders as Web Push notifications, even when the app is closed.",
   "scripts": {
     "start": "node index.js",
     "vapid": "web-push generate-vapid-keys --json"

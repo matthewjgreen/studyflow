@@ -141,6 +141,6 @@ async function scan() {
 }
 
 const intervalMs = Number(SCAN_INTERVAL_SECONDS) * 1000
-console.log(`StudyFlow push worker started. Scanning every ${SCAN_INTERVAL_SECONDS}s.`)
+console.log(`Trackr push worker started. Scanning every ${SCAN_INTERVAL_SECONDS}s.`)
 scan()
 setInterval(scan, intervalMs)

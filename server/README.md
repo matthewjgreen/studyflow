@@ -1,4 +1,4 @@
-# StudyFlow Push Worker
+# Trackr Push Worker
 
 Sends due-date reminders as Web Push notifications so users get them **even when
 the app is completely closed**. It scans Supabase on an interval and pushes to

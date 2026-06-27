@@ -1,4 +1,4 @@
-# Deploying StudyFlow to Vercel
+# Deploying Trackr to Vercel
 
 Vercel hosts the **frontend** (the Vite/React app). Supabase already hosts your
 database + auth. The **push worker** (`server/`) can't run on Vercel (it's a
@@ -12,7 +12,7 @@ From the project folder:
 cd ~/Projects/studyflow
 git init
 git add -A
-git commit -m "StudyFlow initial commit"
+git commit -m "Trackr initial commit"
 ```
 
 Then create an **empty** repo on github.com (no README), and push:

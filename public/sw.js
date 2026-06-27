@@ -1,4 +1,4 @@
-/* StudyFlow service worker — receives Web Push messages and shows them as OS
+/* Trackr service worker — receives Web Push messages and shows them as OS
    notifications, even when the app/tab is closed. */
 
 self.addEventListener('push', (event) => {
@@ -6,10 +6,10 @@ self.addEventListener('push', (event) => {
   try {
     data = event.data ? event.data.json() : {}
   } catch {
-    data = { title: 'StudyFlow', body: event.data ? event.data.text() : '' }
+    data = { title: 'Trackr', body: event.data ? event.data.text() : '' }
   }
 
-  const title = data.title || 'StudyFlow'
+  const title = data.title || 'Trackr'
   const options = {
     body: data.body || '',
     tag: data.tag, // collapses duplicate reminders for the same assignment
@@ -27,7 +27,7 @@ self.addEventListener('notificationclick', (event) => {
 
   event.waitUntil(
     self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
-      // Focus an existing StudyFlow tab if one is open; otherwise open a new one.
+      // Focus an existing Trackr tab if one is open; otherwise open a new one.
       for (const client of clientList) {
         if ('focus' in client) return client.focus()
       }
