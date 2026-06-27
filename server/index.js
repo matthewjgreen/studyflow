@@ -140,7 +140,14 @@ async function scan() {
   if (sentCount > 0) console.log(`[${now.toISOString()}] sent ${sentCount} push notification(s)`)
 }
 
-const intervalMs = Number(SCAN_INTERVAL_SECONDS) * 1000
-console.log(`Trackr push worker started. Scanning every ${SCAN_INTERVAL_SECONDS}s.`)
-scan()
-setInterval(scan, intervalMs)
+if (process.env.RUN_ONCE === '1') {
+  // One-shot mode for scheduled runners (e.g. GitHub Actions cron): scan once
+  // and exit instead of looping forever.
+  await scan()
+  process.exit(0)
+} else {
+  const intervalMs = Number(SCAN_INTERVAL_SECONDS) * 1000
+  console.log(`Trackr push worker started. Scanning every ${SCAN_INTERVAL_SECONDS}s.`)
+  scan()
+  setInterval(scan, intervalMs)
+}

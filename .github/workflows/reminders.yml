@@ -1,0 +1,44 @@
+name: Send reminders
+
+# Runs the Trackr push worker on a schedule so due-date reminders are delivered
+# 24/7 (even when no one's machine is running). Also runnable on demand.
+on:
+  schedule:
+    - cron: '*/15 * * * *' # every 15 minutes (GitHub may delay under load)
+  workflow_dispatch: {}
+
+# Avoid overlapping runs if one is slow.
+concurrency:
+  group: reminders
+  cancel-in-progress: false
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    # Skip (stay green) until the secrets are configured, so it doesn't error
+    # before setup is done.
+    env:
+      HAS_CONFIG: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY != '' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install deps
+        if: env.HAS_CONFIG == 'true'
+        working-directory: server
+        run: npm install --no-audit --no-fund
+      - name: Send due reminders
+        if: env.HAS_CONFIG == 'true'
+        working-directory: server
+        run: node index.js
+        env:
+          RUN_ONCE: '1'
+          VAPID_PUBLIC_KEY: ${{ secrets.VAPID_PUBLIC_KEY }}
+          VAPID_PRIVATE_KEY: ${{ secrets.VAPID_PRIVATE_KEY }}
+          VAPID_SUBJECT: ${{ secrets.VAPID_SUBJECT }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      - name: Not configured yet
+        if: env.HAS_CONFIG != 'true'
+        run: echo "Skipping — repository secrets not set yet. Add them in Settings → Secrets and variables → Actions."
