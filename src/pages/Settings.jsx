@@ -5,7 +5,6 @@ import { useAssignments } from '../context/AssignmentsContext.jsx'
 import { useNotifications } from '../context/NotificationsContext.jsx'
 import { supabase } from '../lib/supabase.js'
 import { COLOR_OPTIONS, accentFor } from '../lib/accents.js'
-import { BANNER_OPTIONS } from '../lib/banners.js'
 import { fileToDataUrl } from '../lib/image.js'
 import Avatar from '../components/Avatar.jsx'
 import CropModal from '../components/CropModal.jsx'
@@ -26,7 +25,6 @@ export default function Settings() {
         <CoursesSection />
         <PasswordSection />
         <AppearanceSection />
-        <BannerSection />
         <NotificationsSection />
         <AvatarSection />
       </div>
@@ -446,36 +444,6 @@ function NotificationsSection() {
           />
         </div>
       )}
-    </Card>
-  )
-}
-
-/* ---------- greeting banner color ---------- */
-
-function BannerSection() {
-  const { banner, setBanner } = useTheme()
-  return (
-    <Card icon={SunIcon} title="Greeting banner" subtitle="Color of the welcome banner on your dashboard">
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-        {BANNER_OPTIONS.map((b) => {
-          const active = banner === b.key
-          return (
-            <button
-              key={b.key}
-              onClick={() => setBanner(b.key)}
-              className={`overflow-hidden rounded-xl border-2 text-left transition ${
-                active ? 'border-brand-500' : 'border-transparent hover:border-slate-200 dark:hover:border-slate-600'
-              }`}
-            >
-              <div className="h-10 w-full" style={{ background: b.gradient }} />
-              <div className="px-3 py-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300">
-                {b.label}
-                {active ? ' ✓' : ''}
-              </div>
-            </button>
-          )
-        })}
-      </div>
     </Card>
   )
 }

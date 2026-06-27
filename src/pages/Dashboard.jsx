@@ -1,22 +1,13 @@
 import { useNavigate } from 'react-router-dom'
 import { useAssignments, courseById } from '../context/AssignmentsContext.jsx'
-import { useAuth } from '../context/AuthContext.jsx'
-import { useTheme } from '../context/ThemeContext.jsx'
 import { accentFor } from '../lib/accents.js'
-import { bannerByKey } from '../lib/banners.js'
 import ProgressRing from '../components/ProgressRing.jsx'
+import StatusSelect from '../components/StatusSelect.jsx'
 import { ClockIcon, TrendIcon } from '../components/Icons.jsx'
 
 export default function Dashboard() {
-  const { assignments, courses, stats } = useAssignments()
-  const { user, profile } = useAuth()
-  const { banner } = useTheme()
+  const { assignments, courses, stats, setStatus } = useAssignments()
   const navigate = useNavigate()
-
-  // Prefer the saved first name; otherwise fall back to the email local part.
-  const firstName =
-    profile.firstName?.trim() ||
-    (user?.email?.split('@')[0] ?? 'there').replace(/^\w/, (c) => c.toUpperCase())
 
   const upcoming = [...assignments]
     .filter((a) => a.status !== 'completed')
@@ -26,19 +17,8 @@ export default function Dashboard() {
 
   return (
     <div className="mx-auto max-w-6xl px-5 py-5 md:px-8 md:py-6">
-      {/* Welcome banner */}
-      <section
-        className="overflow-hidden rounded-2xl px-6 py-6 text-white shadow-soft"
-        style={{ background: bannerByKey(banner).gradient }}
-      >
-        <h2 className="text-xl font-bold md:text-2xl">Hey, {firstName}! 👋</h2>
-        <p className="mt-1 text-sm text-white/90">
-          You've completed {stats.percent}% of your semester goals. Keep up the great momentum!
-        </p>
-      </section>
-
-      {/* Outlook — moved to the top */}
-      <section className="mt-5 rounded-2xl bg-white dark:bg-slate-800 p-5 shadow-card">
+      {/* Outlook */}
+      <section className="rounded-2xl bg-white dark:bg-slate-800 p-5 shadow-card">
         <div className="mb-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <ClockIcon className="h-4 w-4 text-amber-500" />
@@ -64,13 +44,12 @@ export default function Dashboard() {
                 <span className={`h-9 w-1 rounded-full ${accent.bar}`} />
                 <div className="min-w-0 flex-1">
                   <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
-                    {due.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' })}
+                    {due.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' })} ·{' '}
+                    {due.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
                   </p>
                   <p className="truncate text-sm font-semibold text-slate-700 dark:text-slate-100">{a.title}</p>
                 </div>
-                <span className={`shrink-0 rounded-lg px-2.5 py-1 text-xs font-semibold ${accent.chipBg} ${accent.chipText}`}>
-                  {due.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
-                </span>
+                <StatusSelect value={a.status} onChange={(s) => setStatus(a.id, s)} />
               </li>
             )
           })}
